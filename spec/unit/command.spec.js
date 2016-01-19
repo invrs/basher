@@ -3,32 +3,22 @@ import { command } from "../../"
 describe("command", () => {
   describe("tasks", function() {
     beforeEach(() => {
-      let hello = command(class {
-        description() { return "hello description" }
-        run() { console.log("hello!") }
-      })
-      hello.world = command(class {
-        description() { return "world description" }
-        run() { console.log("world!") }
-      })
       this.command = command(class {
         constructor(state) {
-          this.state({
-            tasks: { hello }
-          })
+          this.state({ tasks: this.commands })
         }
         run(state) {
           return this.tasks(state)
         }
-      })
+      }).include(`${__dirname}/../fixtures`)
     })
 
     it("prints tasks", () => {
       spyOn(console, "log")
       this.command().run({ task: "asd" })
       expect(console.log).toHaveBeenCalledWith([
-        "hello - hello description",
-        "hello.world - world description"
+        "hello         hello description",
+        "hello.world   world description"
       ].join("\n"))
     })
 

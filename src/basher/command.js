@@ -2,30 +2,44 @@ import { factory } from "industry"
 
 export default factory.extend(Class =>
   class extends Class {
-    commandsToList(state) {
-      let { tasks } = state
-      let keys = Object.keys(tasks).sort()
+    commandToString(state) {
+      let { command, name, prefix } = state
+      let strings = []
 
-      return keys.reduce(
-        (prev, key) => {  
-          if (key.charAt(0) == "_") return
-          let prefix = key
+      if (command && command._factory && command().description) {
+        strings.push([ prefix, command().description() ])
+      }
+      
+      if (command && command._factory) {
+        strings = strings.concat(
+          this.commandsToStrings(state, {
+            prefix, tasks: command
+          })
+        )
+      }
+
+      return strings
+    }
+
+    commandsToStrings(state) {
+      let { tasks } = state
+      let names = Object.keys(tasks).sort()
+
+      return names.reduce(
+        (strings, name) => {  
+          if (name.charAt(0) == "_")
+            return strings
+
+          let command = tasks[name]
+          let prefix = name
 
           if (state.prefix) {
-            prefix = `${state.prefix}.${prefix}`
+            prefix = `${state.prefix}.${name}`
           }
           
-          if (tasks[key] && tasks[key]().description) {
-            prev.push(`${prefix} - ${tasks[key]().description()}`)
-          }
-
-          if (typeof tasks[key] == "function") {
-            prev = prev.concat(this.commandsToList(state, {
-              prefix, tasks: tasks[key]
-            }))
-          }
-
-          return prev
+          return this.commandToString(state, {
+            command, name, prefix
+          })
         },
         []
       )
@@ -34,14 +48,31 @@ export default factory.extend(Class =>
     tasks(state) {
       let { task, tasks } = state
 
-      task = task.split(".").reduce((tasks, key) => {
-        return tasks[key]
+      let command = task.split(".").reduce((tasks, key) => {
+        if (tasks[key]) {
+          return tasks[key]
+        }
       }, tasks)
       
-      if (task) {
-        task().run(state)
+      if (command) {
+        command().run(state)
       } else {
-        let list = this.commandsToList(state)
+        let list = this.commandsToStrings(state)
+        let max  = list.reduce((prev, task) => {
+            if (task[0].length > prev) {
+              return task[0].length
+            } else {
+              return prev
+            }
+          },
+          0
+        )
+
+        list = list.map(task => {
+          let space = Array(max - task[0].length + 4).join(" ")
+          return `${task[0]}${space}${task[1]}`
+        })
+        
         console.log(list.join("\n"))
       }
     }
