@@ -6,11 +6,11 @@ export default factory.extend(Class =>
       let { command, name, prefix } = state
       let strings = []
 
-      if (command && command._factory && command().description) {
-        strings.push([ prefix, command().description() ])
-      }
-      
       if (command && command._factory) {
+        if (command().description) {
+          strings.push([ prefix, command().description() ])
+        }
+
         strings = strings.concat(
           this.commandsToStrings(state, {
             prefix, tasks: command
@@ -48,17 +48,17 @@ export default factory.extend(Class =>
     tasks(state) {
       let { task, tasks } = state
 
-      let command = task.split(".").reduce((tasks, key) => {
-        if (tasks[key]) {
-          return tasks[key]
-        }
-      }, tasks)
+      let command = task.split(".")
+        .reduce((tasks, key) => {
+          if (tasks[key]) { return tasks[key] }
+        }, tasks)
       
       if (command) {
         command().run(state)
       } else {
         let list = this.commandsToStrings(state)
-        let max  = list.reduce((prev, task) => {
+        let max  = list.reduce(
+          (prev, task) => {
             if (task[0].length > prev) {
               return task[0].length
             } else {
@@ -69,7 +69,8 @@ export default factory.extend(Class =>
         )
 
         list = list.map(task => {
-          let space = Array(max - task[0].length + 4).join(" ")
+          let length = max - task[0].length + 4
+          let space = Array(length).join(" ")
           return `${task[0]}${space}${task[1]}`
         })
         
