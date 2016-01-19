@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/invrs/basher#readme",
   "dependencies": {
-    "industry": "2.4.2"
+    "industry": "2.4.2",
+    "minimist": "1.2.0"
   },
   "devDependencies": {
     "babel": "^5.8.23",

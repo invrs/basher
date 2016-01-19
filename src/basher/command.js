@@ -1,7 +1,14 @@
 import { factory } from "industry"
+import minimist from "minimist"
 
 export default factory.extend(Class =>
   class extends Class {
+    constructor(state) {
+      let argv = state.argv || process.argv.slice(2)
+      state.options = minimist(argv)
+      super(state)
+    }
+
     commandToString(state) {
       let { command, name, prefix } = state
       let strings = []
@@ -47,11 +54,14 @@ export default factory.extend(Class =>
 
     tasks(state) {
       let { task, tasks } = state
+      let command
 
-      let command = task.split(".")
-        .reduce((tasks, key) => {
-          if (tasks[key]) { return tasks[key] }
-        }, tasks)
+      if (task) {
+        command = task.split(".")
+          .reduce((tasks, key) => {
+            if (tasks[key]) { return tasks[key] }
+          }, tasks)
+      }
       
       if (command) {
         command().run(state)
