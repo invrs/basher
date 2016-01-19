@@ -1,0 +1,31 @@
+{
+  "name": "basher",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "npm run compile",
+    "prepublish": "npm run compile",
+    "compile": "rm -rf lib && babel src -s --out-dir lib",
+    "start": "babel src -s -w --out-dir lib",
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/invrs/basher.git"
+  },
+  "author": "Winton Welsh <winton@inverse.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/invrs/basher/issues"
+  },
+  "homepage": "https://github.com/invrs/basher#readme",
+  "dependencies": {
+    "industry": ""
+  },
+  "devDependencies": {
+    "babel": "^5.8.23",
+    "jasmine": "^2.3.2",
+    "source-map-support": "^0.3.3"
+  }
+}
