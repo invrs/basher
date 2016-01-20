@@ -4,7 +4,7 @@ Run any command or shell script anywhere, in any order.
 
 ## Basic "hello" task
 
-`bin/run`:
+**`bin/run`**:
 
 ```js
 #!/usr/bin/env node
@@ -12,7 +12,7 @@ Run any command or shell script anywhere, in any order.
 require("../lib/runner")().run()
 ```
 
-`lib/runner.js`:
+**`lib/runner.js`**:
 
 ```js
 import { command } from "basher"
@@ -38,7 +38,7 @@ export default command(Runner).include(__dirname)
 
 ```
 
-`lib/commands/hello`:
+**`lib/commands/hello.js`**:
 
 ```js
 import { command } from "basher"
