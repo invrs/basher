@@ -17,8 +17,10 @@ describe("command", () => {
       spyOn(console, "log")
       this.command().run()
       expect(console.log).toHaveBeenCalledWith([
+        "",
         "hello         hello description",
-        "hello.world   world description"
+        "hello.world   world description",
+        ""
       ].join("\n"))
     })
 

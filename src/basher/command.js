@@ -94,8 +94,8 @@ export default factory.extend(Class =>
           let space = Array(length).join(" ")
           return `${task[0]}${space}${task[1]}`
         })
-        
-        console.log(list.join("\n"))
+
+        console.log(`\n${list.join("\n")}\n`)
       }
     }
   }
