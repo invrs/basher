@@ -21,7 +21,7 @@ export default factory.extend(Class =>
       let strings = []
 
       if (command && command._factory) {
-        if (command().description) {
+        if (typeof command == "function" && command().description) {
           strings.push([ prefix, command().description() ])
         }
 
@@ -51,9 +51,11 @@ export default factory.extend(Class =>
             prefix = `${state.prefix}.${name}`
           }
           
-          return this.commandToString(state, {
-            command, name, prefix
-          })
+          return strings.concat(
+            this.commandToString(state, {
+              command, name, prefix
+            })
+          )
         },
         []
       )
