@@ -9,6 +9,13 @@ export default factory.extend(Class =>
       super(state)
     }
 
+    checkHelp({ options }) {
+      if (options.h || options.help) {
+        this.help()
+        return true
+      }
+    }
+
     commandToString(state) {
       let { command, name, prefix } = state
       let strings = []
@@ -55,6 +62,8 @@ export default factory.extend(Class =>
     tasks(state) {
       let { task, tasks } = state
       let command
+
+      if (this.checkHelp()) return
 
       if (task) {
         command = task.split(".")
