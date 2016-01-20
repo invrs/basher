@@ -15,7 +15,7 @@ describe("command", () => {
 
     it("prints tasks", () => {
       spyOn(console, "log")
-      this.command().run({ task: "asd" })
+      this.command().run()
       expect(console.log).toHaveBeenCalledWith([
         "hello         hello description",
         "hello.world   world description"
@@ -26,6 +26,10 @@ describe("command", () => {
       spyOn(console, "log")
       this.command().run({ task: "hello" })
       expect(console.log).toHaveBeenCalledWith("hello!")
+    })
+
+    it("runs hello.world task", () => {
+      spyOn(console, "log")
       this.command().run({ task: "hello.world" })
       expect(console.log).toHaveBeenCalledWith("world!")
     })
