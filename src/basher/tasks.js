@@ -1,14 +1,5 @@
-import { factory } from "industry"
-import minimist from "minimist"
-
-export default factory.extend(Class =>
+export default Class =>
   class extends Class {
-    constructor(state) {
-      let argv = state.argv || process.argv.slice(2)
-      state.options = minimist(argv)
-      super(state)
-    }
-
     checkHelp({ options }) {
       if (options.h || options.help) {
         this.help()
@@ -22,7 +13,6 @@ export default factory.extend(Class =>
       
       console.log(`\n${this.spacedTasks({ list })}\n`)
     }
-
 
     longestTask({ list }) {
       let reduce = (prev, task) => {
@@ -55,14 +45,15 @@ export default factory.extend(Class =>
       if (this.checkHelp()) return
 
       if (task) {
-        command = task.split(".")
+        command = task
+          .split(".")
           .reduce((tasks, key) => {
             if (tasks[key]) { return tasks[key] }
           }, tasks)
       }
       
       if (command) {
-        command().run(state)
+        command().run(state, { runner: true })
       } else {
         this.listTasks(state)
       }
@@ -116,4 +107,3 @@ export default factory.extend(Class =>
       )
     }
   }
-)
