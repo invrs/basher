@@ -1,10 +1,8 @@
 import { factory } from "industry"
+import ext from "./basher/ext"
 
-import args from "./basher/args"
-import cmd from "./basher/cmd"
-import helpers from "./basher/helpers"
-import tasks from "./basher/tasks"
-
-let command = factory.extend(args, cmd, helpers, tasks)
+let command = factory
+  .extend(...ext)
+  .include(`${__dirname}/basher/include`)
 
 export { command }

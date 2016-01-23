@@ -7,11 +7,12 @@ export default Class =>
       }
     }
 
-    listTasks(state) {
+    listTasks(state, resolve) {
       let { task } = state
       let list = this.tasksToStrings(state)
       
       console.log(`\n${this.spacedTasks({ list })}\n`)
+      resolve()
     }
 
     longestTask({ list }) {
@@ -53,9 +54,9 @@ export default Class =>
       }
       
       if (command) {
-        command().run(state, { runner: true })
+        return command().run(state)
       } else {
-        this.listTasks(state)
+        return this.listTasks(state)
       }
     }
 
