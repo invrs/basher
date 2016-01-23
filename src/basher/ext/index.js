@@ -1,5 +1,5 @@
 import args from "./args"
-import helpers from "./helpers"
+import log from "./log"
 import tasks from "./tasks"
 
-export default [ args, helpers, tasks ]
+export default [ args, log, tasks ]

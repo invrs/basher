@@ -54,7 +54,7 @@ export default Class =>
       }
       
       if (command) {
-        return command().run(state)
+        return command().log(state)
       } else {
         return this.listTasks(state)
       }
