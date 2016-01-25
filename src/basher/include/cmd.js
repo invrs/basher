@@ -6,7 +6,7 @@ export default factory(class {
     this.state({ cmd: [] })
   }
 
-  cmd({ add, cmd, split }, resolve) {
+  cmd({ add, cmd, split }) {
     if (add) {
       add = this.flatten({ cmd: add })
       cmd = cmd.concat(add)
@@ -17,12 +17,16 @@ export default factory(class {
       cmd = cmd.concat(split)
     }
     
-    this.state({ cmd })
+    if (cmd) {
+      this.state({ cmd })
+    }
+
+    return this
   }
 
-  childProcess({ cmd }) {
+  childProcess({ cmd, stdio: stdio = "inherit" }) {
     return child_process.spawn(
-      cmd.shift(), cmd, { stdio: "pipe" }
+      "sh", [ "-c", cmd.join(" ") ], { stdio }
     )
   }
 
@@ -32,8 +36,8 @@ export default factory(class {
     }, cmd)
   }
 
-  run({ cmd }, resolve) {
-    let proc = this.childProcess({ cmd })
+  run({ cmd, stdio }, resolve) {
+    let proc = this.childProcess({ cmd, stdio })
     let output = ""
 
     if (proc.stdout) {
