@@ -4,7 +4,8 @@ export default (Class) =>
   class extends Class {
     constructor(state) {
       let instance = factory(null)
-      let cmd = instance.cmd.bind(instance)
+      let cmd = (str) =>
+        instance.cmd.bind(instance)({ add: str })
 
       super({ cmd })
     }
