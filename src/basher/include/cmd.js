@@ -46,6 +46,8 @@ export default factory(class {
       })
     }
 
-    proc.on('close', () => resolve(output.trim()))
+    proc.on('close', () =>
+      resolve({ output: output.trim() })
+    )
   }
 })
