@@ -39,7 +39,7 @@ export default Class =>
       return list.map(map).join("\n")
     }
 
-    tasks(state) {
+    tasks(state, resolve) {
       let { task, tasks } = state
       let command
 
@@ -54,9 +54,9 @@ export default Class =>
       }
       
       if (command) {
-        return command().log(state)
+        resolve(command().log(state))
       } else {
-        return this.listTasks(state)
+        resolve(this.listTasks(state))
       }
     }
 
