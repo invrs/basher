@@ -1,9 +1,5 @@
 export default Class =>
   class extends Class {
-    checkHelp({ options }) {
-      return (options.h || options.help);
-    }
-
     listTasks(state) {
       let { task } = state
       let list = this.tasksToStrings(state)
@@ -15,10 +11,10 @@ export default Class =>
       console.log(`\n${this.listTasks(state)}\n`)
     }
 
-    longestTask({ list }) {
+    longestTask({ list, index: index = 0 }) {
       let reduce = (prev, task) => {
-        if (task[0].length > prev) {
-          return task[0].length
+        if (task[index].length > prev) {
+          return task[index].length
         } else {
           return prev
         }
@@ -26,30 +22,19 @@ export default Class =>
       return list.reduce(reduce, 0)
     }
 
-    runHelp(state, resolve) {
-      let { command } = state
-      let help
-
-      if (command && command().help) {
-        help = command().help(state)
-      } else if (this.help) {
-        help = this.help(state)
-        help += "\n\n"
-        help += this.listTasks(state)
-      }
-
-      console.log(`\n${help}\n`)
-      return help
-    }
-
     spacedTasks({ list }) {
-      let max = this.longestTask({ list })
+      let max_lengths = [ 0, 1 ].map(index =>
+        this.longestTask({ list, index })
+      )
       
       let map = task => {
-        let length = max - task[0].length + 4
-        let space = Array(length).join(" ")
+        let spaces = max_lengths.map((max, index) =>
+          this.spaceTask({ max, task: task[index] })
+        )
 
-        return `${task[0]}${space}${task[1]}`
+        return task
+          .map((t, index) => t + (spaces[index] || ""))
+          .join("")
       }
 
       return list.map(map).join("\n")
@@ -60,11 +45,7 @@ export default Class =>
       let command
 
       if (task) {
-        command = task
-          .split(".")
-          .reduce((tasks, key) => {
-            if (tasks[key]) { return tasks[key] }
-          }, tasks)
+        command = this.taskToCommand({ task, tasks })
       }
       
       if (this.checkHelp()) {
@@ -76,6 +57,14 @@ export default Class =>
       }
     }
 
+    taskToCommand({ task, tasks }) {
+      return task
+        .split(".")
+        .reduce((tasks, key) => {
+          if (tasks[key]) { return tasks[key] }
+        }, tasks)
+    }
+
     taskToString(state) {
       let { command, prefix } = state
       let strings = []
@@ -83,9 +72,13 @@ export default Class =>
 
       if (command && command._factory) {
         if (is_function && command().description) {
-          strings.push(
-            [ prefix, command().description() ]
-          )
+          let task = [ prefix, command().description() ]
+
+          if (command().options) {
+            task.push(command().options())
+          }
+          
+          strings.push(task)
         }
 
         strings = strings.concat(
@@ -122,5 +115,10 @@ export default Class =>
         },
         []
       )
+    }
+
+    spaceTask({ max, task }) {
+      let length = max - task.length + 4
+      return Array(length).join(" ")
     }
   }
