@@ -8,5 +8,9 @@ export default (Class) =>
         instance.cmd.bind(instance)({ add: str })
 
       super(...args, { cmd })
+
+      for (let [ name, fn ] of this.functions()) {
+        this[name] = (...args) => fn(...args, { cmd })
+      }
     }
   }
