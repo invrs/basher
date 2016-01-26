@@ -48,10 +48,14 @@ export default factory(class {
       proc.stderr.on("data", data => {
         output += data
       })
-    }
 
-    proc.on('close', () =>
-      resolve({ output: output.trim() })
-    )
+      proc.on('close', () =>
+        resolve({ output: output.trim() })
+      )
+    } else {
+      proc.on('close', () =>
+        resolve(cmd.join(" "))
+      )
+    }
   }
 })

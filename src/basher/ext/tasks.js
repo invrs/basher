@@ -1,18 +1,18 @@
 export default Class =>
   class extends Class {
     checkHelp({ options }) {
-      if (options.h || options.help) {
-        this.help()
-        return true
-      }
+      return (options.h || options.help);
     }
 
-    listTasks(state, resolve) {
+    listTasks(state) {
       let { task } = state
       let list = this.tasksToStrings(state)
-      
-      console.log(`\n${this.spacedTasks({ list })}\n`)
-      resolve()
+
+      return this.spacedTasks({ list })
+    }
+
+    logTasks(state) {
+      console.log(`\n${this.listTasks(state)}\n`)
     }
 
     longestTask({ list }) {
@@ -24,6 +24,22 @@ export default Class =>
         }
       }
       return list.reduce(reduce, 0)
+    }
+
+    runHelp(state, resolve) {
+      let { command } = state
+      let help
+
+      if (command && command().help) {
+        help = command().help(state)
+      } else if (this.help) {
+        help = this.help(state)
+        help += "\n\n"
+        help += this.listTasks(state)
+      }
+
+      console.log(`\n${help}\n`)
+      return help
     }
 
     spacedTasks({ list }) {
@@ -43,8 +59,6 @@ export default Class =>
       let { task, tasks } = state
       let command
 
-      if (this.checkHelp()) return
-
       if (task) {
         command = task
           .split(".")
@@ -53,10 +67,12 @@ export default Class =>
           }, tasks)
       }
       
-      if (command) {
+      if (this.checkHelp()) {
+        resolve(this.runHelp(state, { command }))
+      } else if (command) {
         resolve(command().log(state))
       } else {
-        resolve(this.listTasks(state))
+        resolve(this.logTasks(state))
       }
     }
 
