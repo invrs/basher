@@ -6,15 +6,10 @@ export default factory(class {
     this.state({ cmd: [] })
   }
 
-  cmd({ add, cmd, split }) {
-    if (add) {
-      add = this.flatten({ cmd: add })
-      cmd = cmd.concat(add)
-    }
-
-    if (split) {
-      split = split.split(/\s+/)
-      cmd = cmd.concat(split)
+  add({ cmd, args }) {
+    if (args) {
+      args = this.flatten({ args })
+      cmd = cmd.concat(args)
     }
     
     if (cmd) {
@@ -26,14 +21,18 @@ export default factory(class {
 
   childProcess({ cmd, stdio: stdio = "inherit" }) {
     return child_process.spawn(
-      "sh", [ "-c", cmd.join(" ") ], { stdio }
+      "sh", [ "-c", this.join() ], { stdio }
     )
   }
 
-  flatten({ cmd }) {
+  flatten({ args }) {
     return Array(5).reduce((last, item) => {
       return [].concat.apply([], last)
-    }, cmd)
+    }, args)
+  }
+
+  join({ cmd }) {
+    return cmd.join(" ")
   }
 
   run({ cmd, stdio }, resolve) {
