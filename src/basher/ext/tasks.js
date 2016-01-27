@@ -28,9 +28,13 @@ export default Class =>
       )
       
       let map = task => {
-        let spaces = max_lengths.map((max, index) =>
-          this.spaceTask({ max, task: task[index] })
-        )
+        let spaces = max_lengths.map((max, index) => {
+          if (task[index + 1]) {
+            return this.spaceTask({ max, task: task[index] })
+          } else {
+            return ""
+          }
+        })
 
         return task
           .map((t, index) => t + (spaces[index] || ""))
