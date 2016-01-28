@@ -48,13 +48,13 @@ export default factory(class {
         output += data
       })
 
-      proc.on('close', () =>
-        resolve({ output: output.trim() })
-      )
+      proc.on('close', (code) => {
+        resolve({ command: this.join(), output: output.trim(), code })
+      })
     } else {
-      proc.on('close', () =>
-        resolve(cmd.join(" "))
-      )
+      proc.on('close', (code) => {
+        resolve({ command: this.join(), code })
+      })
     }
   }
 })
