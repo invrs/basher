@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/invrs/basher#readme",
   "dependencies": {
+    "cli-color": "1.1.0",
     "industry": "2.5.0",
     "minimist": "1.2.0"
   },
