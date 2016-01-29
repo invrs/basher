@@ -19,7 +19,7 @@ export default factory(class {
     return this
   }
 
-  childProcess({ cmd, stdio: stdio = "inherit" }) {
+  childProcess({ cmd, stdio: stdio = "pipe" }) {
     return child_process.spawn(
       "sh", [ "-c", this.join() ], { stdio }
     )
