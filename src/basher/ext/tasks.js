@@ -55,7 +55,7 @@ export default Class =>
       if (this.checkHelp()) {
         resolve(this.runHelp(state, { command }))
       } else if (command) {
-        resolve(command().log(state))
+        resolve(command().run(state))
       } else {
         resolve(this.logTasks(state))
       }
