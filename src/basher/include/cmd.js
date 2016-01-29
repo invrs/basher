@@ -1,8 +1,8 @@
 import child_process from "child_process"
 import { factory } from "industry"
 
-export default factory(class {
-  constructor(state) {
+class Cmd {
+  constructor({ options }) {
     this.state({ cmd: [] })
   }
 
@@ -19,9 +19,9 @@ export default factory(class {
     return this
   }
 
-  childProcess({ cmd, stdio: stdio = "pipe" }) {
+  childProcess({ cmd  }) {
     return child_process.spawn(
-      "sh", [ "-c", this.join() ], { stdio }
+      "sh", [ "-c", this.join() ]
     )
   }
 
@@ -35,26 +35,33 @@ export default factory(class {
     return cmd.join(" ")
   }
 
-  run({ cmd, stdio }, resolve) {
-    let proc = this.childProcess({ cmd, stdio })
+  run({ cmd, debug }, resolve) {
+    let proc = this.childProcess({ cmd })
     let output = ""
 
-    if (proc.stdout) {
-      proc.stdout.on("data", data => {
-        output += data
-      })
+    proc.stdout.on("data", data => {
+      if (debug) {
+        this.log({ normal: data.toString() })
+      }
+      output += data
+    })
 
-      proc.stderr.on("data", data => {
-        output += data
-      })
+    proc.stderr.on("data", data => {
+      if (debug) {
+        this.log({ error: data.toString() })
+      }
+      output += data
+    })
 
-      proc.on('close', (code) => {
-        resolve({ command: this.join(), output: output.trim(), code })
+    proc.on('close', (code) => {
+      resolve({
+        command: this.join(),
+        output: output.trim(),
+        code
       })
-    } else {
-      proc.on('close', (code) => {
-        resolve({ command: this.join(), code })
-      })
-    }
+    })
   }
-})
+}
+
+export default factory(Cmd)
+  .extend(`${__dirname}/../ext/color`)
