@@ -76,10 +76,15 @@ export default Class =>
 
       if (command && command._factory) {
         if (is_function && command().description) {
-          let task = [ prefix, command().description() ]
+          let task = [
+            this.color({ notice: prefix }),
+            this.color({ notice2: command().description() })
+          ]
 
           if (command().options) {
-            task.push(command().options())
+            task.push(
+              this.color({ normal: command().options() })
+            )
           }
           
           strings.push(task)
