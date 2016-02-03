@@ -16,12 +16,9 @@ describe("command", () => {
     it("prints tasks", () => {
       spyOn(console, "log")
       this.command().run()
-      expect(console.log).toHaveBeenCalledWith([
-        "",
-        "hello         hello description",
-        "hello.world   world description",
-        ""
-      ].join("\n"))
+      expect(console.log).toHaveBeenCalledWith(
+        "\n\u001b[38;5;62mhello\u001b[39m         \u001b[38;5;103mhello description\u001b[39m\n\u001b[38;5;62mhello.world\u001b[39m   \u001b[38;5;103mworld description\u001b[39m\n"
+      )
     })
 
     it("runs task", () => {
