@@ -8,7 +8,6 @@ class Cmd {
 
   add({ cmd, args }) {
     if (args) {
-      args = this.flatten({ args })
       cmd = cmd.concat(args)
     }
     
@@ -19,39 +18,35 @@ class Cmd {
     return this
   }
 
-  childProcess({ cmd  }) {
+  childProcess({ cmd, stdio }) {
     return child_process.spawn(
-      "sh", [ "-c", this.join() ]
+      "sh", [ "-c", this.join() ], { stdio }
     )
-  }
-
-  flatten({ args }) {
-    return Array(5).reduce((last, item) => {
-      return [].concat.apply([], last)
-    }, args)
   }
 
   join({ cmd }) {
     return cmd.join(" ")
   }
 
-  run({ cmd, debug }, resolve) {
-    let proc = this.childProcess({ cmd })
+  run({ cmd, debug, stdio }, resolve) {
+    let proc = this.childProcess({ cmd, stdio })
     let output = ""
 
-    proc.stdout.on("data", data => {
-      if (debug) {
-        this.log({ normal: data.toString() })
-      }
-      output += data
-    })
+    if (proc.stdout) {
+      proc.stdout.on("data", data => {
+        if (debug) {
+          this.log({ normal: data.toString() })
+        }
+        output += data
+      })
 
-    proc.stderr.on("data", data => {
-      if (debug) {
-        this.log({ error: data.toString() })
-      }
-      output += data
-    })
+      proc.stderr.on("data", data => {
+        if (debug) {
+          this.log({ error: data.toString() })
+        }
+        output += data
+      })
+    }
 
     proc.on('close', (code) => {
       resolve({
